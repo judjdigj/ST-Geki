@@ -1,12 +1,8 @@
-#include <Joystick.h>
+#include <XInput.h>
 #include <ResponsiveAnalogRead.h>
-
-Joystick_ Joystick;
 
 const int ANALOG_PIN = A0;
 ResponsiveAnalogRead analog(ANALOG_PIN, true);
-
-
 
 #define LSTART 0
 #define RSTART 1
@@ -31,7 +27,7 @@ void setup(){
   pinMode(RBLUE, INPUT_PULLUP);
   pinMode(LSIDE, INPUT_PULLUP);
   pinMode(RSIDE, INPUT_PULLUP);
-  Joystick.begin();
+  XInput.begin();
 }
 
 void loop(){
@@ -41,16 +37,19 @@ void loop(){
 
 void leverUpdate(){
   analog.update();
-  Joystick.setXAxis(analog.getValue());
+  XInput.setJoystickRange(390, 520);
+  XInput.setJoystickX(JOY_LEFT, analog.getValue(), true);
 }
 
 void buttonUpdate(){
-  for(int i=0;i<10;i++){
-    if(digitalRead(i)){
-      Joystick.releaseButton(i);
-    }
-    else{
-      Joystick.pressButton(i);
-    }
-  }
+  XInput.setButton(BUTTON_BACK,!digitalRead(LSTART));
+  XInput.setButton(BUTTON_START,!digitalRead(RSTART));
+  XInput.setButton(DPAD_LEFT,!digitalRead(LRED));
+  XInput.setButton(DPAD_UP,!digitalRead(LGREEN));
+  XInput.setButton(DPAD_RIGHT,!digitalRead(LBLUE));
+  XInput.setButton(BUTTON_X,!digitalRead(RRED));
+  XInput.setButton(BUTTON_Y,!digitalRead(RGREEN));
+  XInput.setButton(BUTTON_B,!digitalRead(RBLUE));
+  XInput.setButton(BUTTON_LB,!digitalRead(LSIDE));
+  XInput.setButton(BUTTON_RB,!digitalRead(RSIDE));
 }
